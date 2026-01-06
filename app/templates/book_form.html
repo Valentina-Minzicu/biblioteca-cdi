@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if mode == "new" %}
+    <h2>Adaugă carte</h2>
+    <form method="post" action="/admin/books/new">
+  {% else %}
+    <h2>Editează carte</h2>
+    <form method="post" action="/admin/books/{{ book.id }}/edit">
+  {% endif %}
+
+    <div style="margin-top:10px;">
+      <label>Titlu</label><br>
+      <input name="title" required style="width:420px;"
+             value="{{ book.title if book else '' }}">
+    </div>
+
+    <div style="margin-top:10px;">
+      <label>Autor</label><br>
+      <input name="author" required style="width:420px;"
+             value="{{ book.author if book else '' }}">
+    </div>
+
+    <div style="margin-top:10px;">
+      <label>Total exemplare</label><br>
+      <input type="number" name="total_copies" min="1" required style="width:140px;"
+             value="{{ book.total_copies if book else 1 }}">
+      <div style="color:#666; margin-top:6px;">
+        Disponibilele se calculează automat: total − rezervări/împrumuturi.
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <button class="btn" type="submit">Salvează</button>
+      <a class="btn" href="/admin/">Renunță</a>
+    </div>
+  </form>
+{% endblock %}

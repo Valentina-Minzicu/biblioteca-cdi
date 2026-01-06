@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Panou admin</h2>
+    <p><a href="/admin/logout">Logout</a></p>
+    <p><a class="btn" href="#inregistrari">Sari la inregistrari</a></p>
+
+    <form method="get" action="/admin/" style="margin-bottom: 10px;">
+        <input name="q_books" placeholder="Catuta dupa autor sau titlu" value="{{ q_books or '' }}" style="width: 320px;">
+        {% if q_loans %}
+            <input type="hidden" name="q_loans" value="{{ q_loans }}">
+        {% endif %}
+        <button class="btn" type="submit">Cauta</button>
+        {% if q_books %}
+            <a class="btn" href="/admin/{% if q_loans %}?q_loans={{ q_loans }}{% endif %}">Reseteaza</a>
+        {% endif %}
+    </form>
+
+    <h3>Cărți (cu nr. crt.)</h3>
+    <p>
+        <a class="btn" href="/admin/books/new">+ Adaugă carte</a>
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nr. crt.</th>
+                <th>Autor</th>
+                <th>Titlu</th>
+                <th>Total</th>
+                <th>Disponibile</th>
+                <th>Acțiuni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in books %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ b.author }}</td>
+                    <td>{{ b.title }}</td>
+                    <td>{{ b.total_copies }}</td>
+                    <td>{{ b.available_copies }}</td>
+                    <td style="white-space:nowrap;">
+                        <a class="btn" href="/admin/books/{{ b.id }}/edit">Editează</a>
+                        <form method="post" action="/admin/books/{{ b.id }}/delete" style="display:inline; margin:0;" onsubmit="return confirm('Sigur vrei să ștergi această carte?');">
+                            <button class="btn" type="submit">Șterge</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 id="inregistrari" style="margin-top: 18px;">Rezervari</h3>
+
+    <form method="get" action="/admin/" style="margin-bottom: 10px;">
+        <input name="q_loans" placeholder="Catuta dupa nume sau clasa" value="{{ q_loans or '' }}" style="width: 320px;">
+        {% if q_books %}
+            <input type="hidden" name="q_books" value="{{ q_books }}">
+        {% endif %}
+        <button class="btn" type="submit">Cauta</button>
+        {% if q_loans %}
+            <a class="btn" href="/admin/{% if q_books %}?q_books={{ q_books }}{% endif %}">Reseteaza</a>
+        {% endif %}
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nr. Crt.</th>
+                <th>Carte</th>
+                <th>Nume</th>
+                <th>Clasa</th>
+                <th>Rezervat la</th>
+                <th>Imprumutat</th>
+                <th>Returnare/Stergere</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for l in loans %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ l.book.title }}</td>
+                    <td>{{ l.student_name }}</td>
+                    <td>{{ l.student_class }}</td>
+                    <td>{{ l.reserved_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                    <td>
+                        <form method="post" action="/admin/loan/toggle-borrowed" style="margin:0;">
+                            <input type="hidden" name="loan_id" value="{{ l.id }}">
+                            <button class="btn" type="submit">{{ "✔️" if l.is_borrowed else "⬜" }}</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="/admin/loan/delete" style="margin:0;">
+                            <input type="hidden" name="loan_id" value="{{ l.id }}">
+                            <button class="btn">Sterge (returnat)</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

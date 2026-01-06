@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ro">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {{title or "Biblioteca CDI"}}
+        </title>
+        <style>
+            body {font-family: Arial, sans-serif; margin: 24px; }
+            table {border-collapse: collapse; width: 100%; }
+            th, td {border: 1px solid #ddd; padding: 8px; }
+            th {background: #f4f4f4;}
+            .flash-ok {background: #e7f7ea; padding: 10px; margin: 10px 0;}
+            .flash-error {background: #fde8e8; padding: 10px; margin: 10px 0;}
+            .topbar {display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;}
+            .btn {padding: 6px 10px; cursor: pointer;}
+            .btb[disabled] {cursor: not-allowed; opacity: 0.6;}
+        </style>
+    </head>
+    <body>
+        <div class="topbar">
+            <div><b>Biblioteca CDI</b></div>
+            <div>
+                <a href="/">Acasa</a>
+                <a href="/admin/">Admin</a>
+            </div>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="flash-{{category}}">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </body>
+</html>

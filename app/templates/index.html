@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Carti disponibile</h2>
+
+<form method="get" action="/" style="margin-bottom: 12px;">
+    <input name="q" placeholder="Cauta dupa autor sau titlu" value="{{ q or '' }}" style="width: 320px;">
+    <button class="btn" type="submit">Cauta</button>
+    {% if q %}
+        <a class="btn" href="/">Reseteaza</a>
+    {% endif %}
+</form>
+
+<table>
+    <thead>
+        <th>Autor</th>
+        <th>Titlu</th>
+        <th>Disponibile</th>
+        <th>Actiune</th>
+    </thead>
+    <tbody>
+    {% for b in books %}
+        <tr>
+            <td>{{ b.author }}</td>
+            <td>{{ b.title }}</td>
+            <td>{{ b.available_copies }}</td>
+            <td>
+                {% if b.available_copies > 0 %}
+                    <form method="post" action="/reserve" style="margin: 0;">
+                        <input type="hidden" name="book_id" value="{{ b.id }}">
+                        <input name="student_name" placeholder="Nume" required>
+                        <input name="student_class" class="btn" placeholder="Clasa" required style="width: 90px;">
+                        <button class="btn" type="submit">Imprumuta</button>
+                    </form>
+                    {% else %}
+                        <button class="btn" disabled>Indisponibil</button>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p style="margin-top: 12px; color:#555;">
+    Nota: rezervarea expria automat dupa 7 zile daca nu este confirmata ca imprumut
+</p>
+{% endblock %}
